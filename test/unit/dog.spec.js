@@ -14,23 +14,17 @@ describe('Dog', () => {
   });
 
   describe('#feed', () => {
-    it('should add 10 to the dogs health', () => {
+    it('should add 10 to the dogs health', sinon.test(function (done) {
       const d = new Dog({ name: 'fido',
                           age: 3,
                           health: 50,
                           toy: 'Bones' });
-      d.feed();
-      expect(d.health).to.equal(60);
-    });
-
-    it('should add 5 to the dogs health - already at 95', () => {
-      const d = new Dog({ name: 'fido',
-                          age: 3,
-                          health: 95,
-                          toy: 'Bones' });
-      d.feed();
-      expect(d.health).to.equal(100);
-    });
+      this.stub(d, 'save').yields(null, {});
+      d.feed(() => {
+        expect(d.save.getCall(0).thisValue.health).to.equal(60);
+        done();
+      });
+    }));
   });
 
   describe('constructor', () => {
